@@ -15,8 +15,8 @@ public class Program {
 	public static void main(String[] args) {
 		
 		Scanner sc = new Scanner(System.in);
-		List<ChessPiece> captured = new ArrayList<ChessPiece>();
 		ChessMatch chessMatch = new ChessMatch();
+		List<ChessPiece> captured = new ArrayList<>();
 		
 		while (true) {
 			try {
@@ -28,16 +28,14 @@ public class Program {
 				
 				boolean[][] possibleMoves = chessMatch.possibleMoves(source);
 				UI.clearScreen();
-				//Esse é uma sobrecarga que tbm colore os movimentos possíveis
 				UI.printBoard(chessMatch.getPieces(), possibleMoves);
-
 				System.out.println();
 				System.out.print("Target: ");
 				ChessPosition target = UI.readChessPosition(sc);
-
+				
 				ChessPiece capturedPiece = chessMatch.performChessMove(source, target);
 				
-				if(capturedPiece != null) {
+				if (capturedPiece != null) {
 					captured.add(capturedPiece);
 				}
 			}
@@ -50,7 +48,5 @@ public class Program {
 				sc.nextLine();
 			}
 		}
-		
 	}
-
 }
