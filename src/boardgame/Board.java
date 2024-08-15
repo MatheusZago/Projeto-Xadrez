@@ -54,6 +54,23 @@ public class Board {
 		piece.position = position;
 	}
 	
+	public Piece removePiece(Position position) {
+		if(!positionExists(position)) {
+			throw new BoardException("Position not on board.");
+		}
+		
+		if(piece(position) == null) {
+			return null;
+		} 
+		
+		//Ele ta pegando a peça selecionada e colocando na AUX
+		Piece aux = piece(position);
+		aux.position = null; // Deixando AUX nulo
+		pieces[position.getRow()][position.getColumn()] = null; //A posição onde a peça tava na matriz virou nulo
+		return aux;
+		
+	}
+	
 	//Esse aqui vai ver se o valor ta dentro do tabuleiro 
 	private boolean positionExists(int row, int column) {
 		//Retorna V ou F, dependendo se a expressão for vdd
@@ -72,6 +89,8 @@ public class Board {
 		}
 		return piece(position) != null; 
 	}
+	
+
 	
 	
 
