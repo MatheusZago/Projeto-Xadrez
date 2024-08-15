@@ -45,7 +45,7 @@ public class Board {
 
 
 	public void placePiece(Piece piece, Position position) {
-		if(thereIsaPiece(position)) {
+		if(thereIsAPiece(position)) {
 			throw new BoardException("There is already a piece on position " + position);
 		}
 		
@@ -83,7 +83,7 @@ public class Board {
 	}
 	
 	//Ele vai retornar V ou F, dependendo se a expressão for vdd
-	public boolean thereIsaPiece(Position position) {		
+	public boolean thereIsAPiece(Position position) {		
 		if(!positionExists(position)) {
 			throw new BoardException("Position not on the board.");
 		}
