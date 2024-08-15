@@ -9,6 +9,7 @@ public class Board {
 	public Board(int rows, int columns) {
 		this.rows = rows;
 		this.columns = columns;
+		//Instanciando a matriz peças no construtor tabuleiro
 		pieces = new Piece[rows][columns];
 	}
 
@@ -38,7 +39,11 @@ public class Board {
 	}
 
 
-	
+	public void placePiece(Piece piece, Position position) {
+		//Esta pegando a matriz na posição dada e atribuindo a peça informada.
+		pieces[position.getRow()][position.getColumn()] = piece;
+		piece.position = position;
+	}
 	
 	
 	
