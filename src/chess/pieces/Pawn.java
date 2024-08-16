@@ -2,16 +2,20 @@ package chess.pieces;
 
 import boardgame.Board;
 import boardgame.Position;
+import chess.ChessMatch;
 import chess.ChessPiece;
 import chess.Color;
 
-public class Pawn extends ChessPiece{
+public class Pawn extends ChessPiece {
 
-	public Pawn(Board board, Color color) {
+	private ChessMatch chessMatch;
+
+	public Pawn(Board board, Color color, ChessMatch chessMatch) {
 		super(board, color);
+		this.chessMatch = chessMatch;
 	}
-	
-	//A peça vai aparecer assim qnd for imprimida no tabuleiro.
+
+	// A peça vai aparecer assim qnd for imprimida no tabuleiro.
 	@Override
 	public String toString() {
 		return "P";
@@ -19,55 +23,83 @@ public class Pawn extends ChessPiece{
 
 	@Override
 	public boolean[][] possibleMoves() {
-	boolean[][] mat = new boolean[getBoard().getRows()][ getBoard().getColumns()];
-		
+		boolean[][] mat = new boolean[getBoard().getRows()][getBoard().getColumns()];
+
 		Position p = new Position(0, 0);
-		
-		//Essa é a lógica do peão branco, tem que ser separado pq ele sobe no tabuleiro.
-		if(getColor() == Color.WHITE) {
-			p.setValues(position.getRow()-1,position.getColumn());
-			//Se existir o espaço ele pode pode andar pra fente.
-			if(getBoard().positionExists(p) && !getBoard().thereIsAPiece(p)) {
-				mat[p.getRow()][p.getColumn()] = true;	
+
+		// Essa é a lógica do peão branco, tem que ser separado pq ele sobe no
+		// tabuleiro.
+		if (getColor() == Color.WHITE) {
+			p.setValues(position.getRow() - 1, position.getColumn());
+			// Se existir o espaço ele pode pode andar pra fente.
+			if (getBoard().positionExists(p) && !getBoard().thereIsAPiece(p)) {
+				mat[p.getRow()][p.getColumn()] = true;
 			}
-			//Essa é a lógica pro peão andar 2 posições no turno 1.
+			// Essa é a lógica pro peão andar 2 posições no turno 1.
 			p.setValues(position.getRow() - 2, position.getColumn());
 			Position p2 = new Position(position.getRow() - 1, p.getColumn());
-			if (getBoard().positionExists(p) && !getBoard().thereIsAPiece(p) && getBoard().positionExists(p2) && !getBoard().thereIsAPiece(p2) && getMoveCount() == 0) {
+			if (getBoard().positionExists(p) && !getBoard().thereIsAPiece(p) && getBoard().positionExists(p2)
+					&& !getBoard().thereIsAPiece(p2) && getMoveCount() == 0) {
 				mat[p.getRow()][p.getColumn()] = true;
 			}
-			
-			//Lógica das diagonias para captura
-			p.setValues(position.getRow()-1,position.getColumn()-1);
-			//Se existir o espaço ele pode pode andar pra fente,essa só fica ativada SE tiver uma pessoa oponente.
-			if(getBoard().positionExists(p) && isThereOpponentPiece(p)) {
-				mat[p.getRow()][p.getColumn()] = true;	
-			}
-			p.setValues(position.getRow()-1,position.getColumn()+1);
-			//Se existir o espaço ele pode pode andar pra fente.
-			if(getBoard().positionExists(p) && isThereOpponentPiece(p)) {
-				mat[p.getRow()][p.getColumn()] = true;	
-			}
-		} else { //Essa é a lógica do peão preto.
-			p.setValues(position.getRow()+1,position.getColumn());
-			if(getBoard().positionExists(p) && !getBoard().thereIsAPiece(p)) {
-				mat[p.getRow()][p.getColumn()] = true;	
-			}
-			p.setValues(position.getRow() + 2, position.getColumn());
-			Position p2 = new Position(position.getRow() + 1, p.getColumn());
-			if (getBoard().positionExists(p) && !getBoard().thereIsAPiece(p) && getBoard().positionExists(p2) && !getBoard().thereIsAPiece(p2) && getMoveCount() == 0) {
+
+			// Lógica das diagonias para captura
+			p.setValues(position.getRow() - 1, position.getColumn() - 1);
+			// Se existir o espaço ele pode pode andar pra fente,essa só fica ativada SE
+			// tiver uma pessoa oponente.
+			if (getBoard().positionExists(p) && isThereOpponentPiece(p)) {
 				mat[p.getRow()][p.getColumn()] = true;
 			}
-			p.setValues(position.getRow()+1,position.getColumn()-1);
-			if(getBoard().positionExists(p) && isThereOpponentPiece(p)) {
-				mat[p.getRow()][p.getColumn()] = true;	
+			p.setValues(position.getRow() - 1, position.getColumn() + 1);
+			// Se existir o espaço ele pode pode andar pra fente.
+			if (getBoard().positionExists(p) && isThereOpponentPiece(p)) {
+				mat[p.getRow()][p.getColumn()] = true;
 			}
-			p.setValues(position.getRow()+1,position.getColumn()+1);
-			if(getBoard().positionExists(p) && isThereOpponentPiece(p)) {
-				mat[p.getRow()][p.getColumn()] = true;	
-			}
-		}
-		
+
+			// #specialmove en passant white
+						if (position.getRow() == 3) {
+							Position left = new Position(position.getRow(), position.getColumn() - 1);
+							if (getBoard().positionExists(left) && isThereOpponentPiece(left) && getBoard().piece(left) == chessMatch.getEnPassantVulnerable()) {
+								mat[left.getRow() - 1][left.getColumn()] = true;
+							}
+							Position right = new Position(position.getRow(), position.getColumn() + 1);
+							if (getBoard().positionExists(right) && isThereOpponentPiece(right) && getBoard().piece(right) == chessMatch.getEnPassantVulnerable()) {
+								mat[right.getRow() - 1][right.getColumn()] = true;
+							}
+						}
+					}
+					else {
+						p.setValues(position.getRow() + 1, position.getColumn());
+						if (getBoard().positionExists(p) && !getBoard().thereIsAPiece(p)) {
+							mat[p.getRow()][p.getColumn()] = true;
+						}
+						p.setValues(position.getRow() + 2, position.getColumn());
+						Position p2 = new Position(position.getRow() + 1, position.getColumn());
+						if (getBoard().positionExists(p) && !getBoard().thereIsAPiece(p) && getBoard().positionExists(p2) && !getBoard().thereIsAPiece(p2) && getMoveCount() == 0) {
+							mat[p.getRow()][p.getColumn()] = true;
+						}
+						p.setValues(position.getRow() + 1, position.getColumn() - 1);
+						if (getBoard().positionExists(p) && isThereOpponentPiece(p)) {
+							mat[p.getRow()][p.getColumn()] = true;
+						}			
+						p.setValues(position.getRow() + 1, position.getColumn() + 1);
+						if (getBoard().positionExists(p) && isThereOpponentPiece(p)) {
+							mat[p.getRow()][p.getColumn()] = true;
+						}
+						
+						// #specialmove en passant black
+						if (position.getRow() == 4) {
+							Position left = new Position(position.getRow(), position.getColumn() - 1);
+							if (getBoard().positionExists(left) && isThereOpponentPiece(left) && getBoard().piece(left) == chessMatch.getEnPassantVulnerable()) {
+								mat[left.getRow() + 1][left.getColumn()] = true;
+							}
+							Position right = new Position(position.getRow(), position.getColumn() + 1);
+							if (getBoard().positionExists(right) && isThereOpponentPiece(right) && getBoard().piece(right) == chessMatch.getEnPassantVulnerable()) {
+								mat[right.getRow() + 1][right.getColumn()] = true;
+							}
+						}			
+					}
+
 		return mat;
 	}
 
