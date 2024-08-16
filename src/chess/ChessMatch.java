@@ -77,7 +77,7 @@ public class ChessMatch {
 		Piece capturedPiece = makeMove(source, target);
 		
 		if(testCheck(currentPlayer)) {
-			undoMve(source, target, capturedPiece);
+			undoMove(source, target, capturedPiece);
 			throw new ChessException("You can't put yourself on check.");
 		}
 		
@@ -94,7 +94,9 @@ public class ChessMatch {
 	}
 	
 	private Piece makeMove(Position source, Position target) {
-		Piece p = board.removePiece(source); //Vai remover a peça na posição de origem
+		ChessPiece p = (ChessPiece)board.removePiece(source); //Vai remover a peça na posição de origem
+		//Fez o downcast de cima só pra deixar P acessar o increave movecount.
+		p.increaseMoveCount();
 		Piece capturedPiece	 = board.removePiece(target); //Se tiver uma peça na posição de destino ela tbm será removida
 		board.placePiece(p, target);
 		
@@ -106,8 +108,9 @@ public class ChessMatch {
 	}
 	
 	//Pra desfazer a jogada caso o jogador cause um auto check
-	private void undoMve(Position source, Position target, Piece capturedPiece) {
-		Piece p = board.removePiece(target);
+	private void undoMove(Position source, Position target, Piece capturedPiece) {
+		ChessPiece p = (ChessPiece)board.removePiece(target);
+		p.decreaseMoveCount();
 		board.placePiece(p, source);
 		
 		if(capturedPiece != null) {
@@ -196,7 +199,7 @@ public class ChessMatch {
 						//Essa lógica ta fazendo o computador testar todos os movimentos possíveis.
 						boolean testCheck = testCheck(color);
 						//Após testar ele desfaz os movimentos.
-						undoMve(source, target, capturedPiece);
+						undoMove(source, target, capturedPiece);
 						//Se ele achar um movimento que faça o check acabar (falso) então ele não considera checkmate.
 						if(!testCheck) {
 							return false;
